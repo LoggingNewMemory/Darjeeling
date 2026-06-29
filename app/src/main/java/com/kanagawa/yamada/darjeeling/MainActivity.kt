@@ -231,6 +231,26 @@ fun CaffeineSettingsScreen(modifier: Modifier = Modifier) {
                 InstructionItem("3", "If the screen turns off naturally or via the power button, Darjeeling is automatically disabled.")
             }
         }
+        
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Credits", 
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Developed by: Kanagawa Yamada",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
     }
 }
 
