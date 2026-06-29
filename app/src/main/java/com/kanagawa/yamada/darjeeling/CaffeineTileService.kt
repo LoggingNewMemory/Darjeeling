@@ -83,6 +83,23 @@ class CaffeineTileService : TileService() {
         return defaultMinutes
     }
     
+    private fun createTextIcon(text: String): android.graphics.drawable.Icon {
+        val size = 100
+        val bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bitmap)
+        val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+            color = android.graphics.Color.WHITE
+            textSize = 60f
+            textAlign = android.graphics.Paint.Align.CENTER
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
+        }
+        val bounds = android.graphics.Rect()
+        paint.getTextBounds(text, 0, text.length, bounds)
+        val y = (size / 2f) + (bounds.height() / 2f)
+        canvas.drawText(text, size / 2f, y, paint)
+        return android.graphics.drawable.Icon.createWithBitmap(bitmap)
+    }
+    
     private fun updateTileState() {
         val tile = qsTile ?: return
         when (CaffeineService.currentState) {
@@ -90,31 +107,37 @@ class CaffeineTileService : TileService() {
                 tile.state = Tile.STATE_INACTIVE
                 tile.label = "Darjeeling"
                 tile.subtitle = "Off"
+                tile.icon = android.graphics.drawable.Icon.createWithResource(this, R.drawable.ic_caffeine)
             }
             1 -> {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "Darjeeling"
                 tile.subtitle = getCountdownText("5 minutes")
+                tile.icon = createTextIcon("5")
             }
             2 -> {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "Darjeeling"
                 tile.subtitle = getCountdownText("10 minutes")
+                tile.icon = createTextIcon("10")
             }
             3 -> {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "Darjeeling"
                 tile.subtitle = getCountdownText("15 minutes")
+                tile.icon = createTextIcon("15")
             }
             4 -> {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "Darjeeling"
                 tile.subtitle = getCountdownText("30 minutes")
+                tile.icon = createTextIcon("30")
             }
             5 -> {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "Darjeeling"
                 tile.subtitle = "Unlimited"
+                tile.icon = android.graphics.drawable.Icon.createWithResource(this, R.drawable.ic_caffeine)
             }
         }
         tile.updateTile()
