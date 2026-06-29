@@ -1,8 +1,11 @@
 package com.kanagawa.yamada.darjeeling
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
@@ -78,6 +81,47 @@ fun CaffeineSettingsScreen(modifier: Modifier = Modifier) {
     
     val coroutineScope = rememberCoroutineScope()
     
+    var currentState by remember { mutableStateOf(CaffeineService.currentState) }
+    var currentEndTime by remember { mutableStateOf(CaffeineService.endTime) }
+    var displayTime by remember { mutableStateOf("") }
+    
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                currentState = CaffeineService.currentState
+                currentEndTime = CaffeineService.endTime
+            }
+        }
+        val filter = IntentFilter(CaffeineTileService.ACTION_UPDATE_TILE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            context.registerReceiver(receiver, filter)
+        }
+        onDispose {
+            try { context.unregisterReceiver(receiver) } catch (e: Exception) {}
+        }
+    }
+    
+    LaunchedEffect(currentState, currentEndTime) {
+        while (true) {
+            if (currentState in 1..4) {
+                val remainingMillis = currentEndTime - System.currentTimeMillis()
+                if (remainingMillis > 0) {
+                    val totalSeconds = remainingMillis / 1000
+                    val m = totalSeconds / 60
+                    val s = totalSeconds % 60
+                    displayTime = String.format("%02d:%02d", m, s)
+                } else {
+                    displayTime = ""
+                }
+            } else {
+                displayTime = ""
+            }
+            kotlinx.coroutines.delay(1000)
+        }
+    }
+    
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -85,6 +129,64 @@ fun CaffeineSettingsScreen(modifier: Modifier = Modifier) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Control Darjeeling", 
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                val statusText = when (currentState) {
+                    0 -> "Off"
+                    1 -> "5 minutes ${if (displayTime.isNotEmpty()) "($displayTime left)" else ""}"
+                    2 -> "10 minutes ${if (displayTime.isNotEmpty()) "($displayTime left)" else ""}"
+                    3 -> "15 minutes ${if (displayTime.isNotEmpty()) "($displayTime left)" else ""}"
+                    4 -> "30 minutes ${if (displayTime.isNotEmpty()) "($displayTime left)" else ""}"
+                    5 -> "Unlimited"
+                    else -> "Off"
+                }
+                
+                Text(
+                    text = "Current Status: $statusText",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Button(
+                    onClick = {
+                        CaffeineService.currentState = when (CaffeineService.currentState) {
+                            0 -> 1
+                            1 -> 2
+                            2 -> 3
+                            3 -> 4
+                            4 -> 5
+                            5 -> 0
+                            else -> 0
+                        }
+                        
+                        val intent = Intent(context, CaffeineService::class.java)
+                        intent.action = CaffeineService.ACTION_APPLY_CURRENT_STATE
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            context.startForegroundService(intent)
+                        } else {
+                            context.startService(intent)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(if (currentState == 0) "Start Darjeeling" else "Cycle Timer")
+                }
+            }
+        }
         
         ElevatedCard(
             modifier = Modifier.fillMaxWidth(),
@@ -212,6 +314,8 @@ fun CaffeineSettingsScreen(modifier: Modifier = Modifier) {
                 }
             }
         }
+        
+
         
         ElevatedCard(
             modifier = Modifier.fillMaxWidth(),
