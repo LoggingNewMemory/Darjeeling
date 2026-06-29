@@ -72,32 +72,32 @@ class CaffeineTileService : TileService() {
         when (CaffeineService.currentState) {
             0 -> {
                 tile.state = Tile.STATE_INACTIVE
-                tile.label = "Caffeine"
+                tile.label = "Darjeeling"
                 tile.subtitle = "Off"
             }
             1 -> {
                 tile.state = Tile.STATE_ACTIVE
-                tile.label = "Caffeine"
+                tile.label = "Darjeeling"
                 tile.subtitle = "5 minutes"
             }
             2 -> {
                 tile.state = Tile.STATE_ACTIVE
-                tile.label = "Caffeine"
+                tile.label = "Darjeeling"
                 tile.subtitle = "10 minutes"
             }
             3 -> {
                 tile.state = Tile.STATE_ACTIVE
-                tile.label = "Caffeine"
+                tile.label = "Darjeeling"
                 tile.subtitle = "15 minutes"
             }
             4 -> {
                 tile.state = Tile.STATE_ACTIVE
-                tile.label = "Caffeine"
+                tile.label = "Darjeeling"
                 tile.subtitle = "30 minutes"
             }
             5 -> {
                 tile.state = Tile.STATE_ACTIVE
-                tile.label = "Caffeine"
+                tile.label = "Darjeeling"
                 tile.subtitle = "Unlimited"
             }
         }

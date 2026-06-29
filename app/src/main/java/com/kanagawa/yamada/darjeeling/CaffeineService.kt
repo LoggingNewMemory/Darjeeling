@@ -89,7 +89,7 @@ class CaffeineService : Service() {
             setScreenTimeoutAsync(Int.MAX_VALUE)
             countdownTimer?.cancel()
             countdownTimer = null
-            updateNotification("Caffeine is active (Unlimited)")
+            updateNotification("Darjeeling is active (Unlimited)")
         } else if (timeoutMinutes > 0) {
             val ms = timeoutMinutes * 60 * 1000L
             setScreenTimeoutAsync(Int.MAX_VALUE)
@@ -97,7 +97,7 @@ class CaffeineService : Service() {
             countdownTimer = object : CountDownTimer(ms, 60000) {
                 override fun onTick(millisUntilFinished: Long) {
                     val minLeft = millisUntilFinished / 60000 + 1
-                    updateNotification("Caffeine is active ($minLeft minutes left)")
+                    updateNotification("Darjeeling is active ($minLeft minutes left)")
                 }
                 override fun onFinish() {
                     currentState = 0
@@ -105,7 +105,7 @@ class CaffeineService : Service() {
                     updateTile()
                 }
             }.start()
-            updateNotification("Caffeine is active ($timeoutMinutes minutes left)")
+            updateNotification("Darjeeling is active ($timeoutMinutes minutes left)")
         }
     }
 
@@ -159,8 +159,8 @@ class CaffeineService : Service() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                "caffeine_channel",
-                "Caffeine Service",
+                "darjeeling_channel",
+                "Darjeeling Service",
                 NotificationManager.IMPORTANCE_LOW
             )
             val manager = getSystemService(NotificationManager::class.java)
@@ -168,13 +168,13 @@ class CaffeineService : Service() {
         }
     }
 
-    private fun buildNotification(text: String = "Caffeine is active"): Notification {
+    private fun buildNotification(text: String = "Darjeeling is active"): Notification {
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        return NotificationCompat.Builder(this, "caffeine_channel")
-            .setContentTitle("Caffeine")
+        return NotificationCompat.Builder(this, "darjeeling_channel")
+            .setContentTitle("Darjeeling")
             .setContentText(text)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentIntent(pendingIntent)

@@ -11,14 +11,14 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="Caffeine Tile"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Darjeeling">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="Caffeine Settings"
+            android:label="@string/app_name"
             android:theme="@style/Theme.Darjeeling"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
