@@ -18,6 +18,7 @@ class CaffeineService : Service() {
         var originalTimeout = 60000
         var isRunning = false
         var lastTapTime = 0L
+        var endTime = 0L
     }
 
     private var countdownTimer: CountDownTimer? = null
@@ -89,9 +90,11 @@ class CaffeineService : Service() {
             setScreenTimeoutAsync(Int.MAX_VALUE)
             countdownTimer?.cancel()
             countdownTimer = null
+            endTime = 0L
             updateNotification("Darjeeling is active (Unlimited)")
         } else if (timeoutMinutes > 0) {
             val ms = timeoutMinutes * 60 * 1000L
+            endTime = System.currentTimeMillis() + ms
             setScreenTimeoutAsync(Int.MAX_VALUE)
             countdownTimer?.cancel()
             countdownTimer = object : CountDownTimer(ms, 60000) {
@@ -113,6 +116,7 @@ class CaffeineService : Service() {
         setScreenTimeoutAsync(originalTimeout)
         countdownTimer?.cancel()
         countdownTimer = null
+        endTime = 0L
         isRunning = false
         try {
             unregisterReceiver(screenOffReceiver)

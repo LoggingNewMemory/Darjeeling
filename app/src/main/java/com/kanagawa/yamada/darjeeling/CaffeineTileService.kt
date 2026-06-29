@@ -4,10 +4,22 @@ import android.content.Intent
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 
 class CaffeineTileService : TileService() {
     companion object {
         const val ACTION_UPDATE_TILE = "com.kanagawa.yamada.darjeeling.UPDATE_TILE"
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val ticker = object : Runnable {
+        override fun run() {
+            if (CaffeineService.currentState in 1..4) {
+                updateTileState()
+            }
+            handler.postDelayed(this, 1000)
+        }
     }
 
     private val updateReceiver = object : android.content.BroadcastReceiver() {
@@ -58,13 +70,26 @@ class CaffeineTileService : TileService() {
             registerReceiver(updateReceiver, filter)
         }
         updateTileState()
+        handler.post(ticker)
     }
     
     override fun onStopListening() {
         super.onStopListening()
+        handler.removeCallbacks(ticker)
         try {
             unregisterReceiver(updateReceiver)
         } catch (e: Exception) {}
+    }
+    
+    private fun getCountdownText(defaultMinutes: String): String {
+        val remainingMillis = CaffeineService.endTime - System.currentTimeMillis()
+        if (remainingMillis > 0) {
+            val totalSeconds = remainingMillis / 1000
+            val m = totalSeconds / 60
+            val s = totalSeconds % 60
+            return String.format("%02d:%02d", m, s)
+        }
+        return defaultMinutes
     }
     
     private fun updateTileState() {
@@ -78,22 +103,22 @@ class CaffeineTileService : TileService() {
             1 -> {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "Darjeeling"
-                tile.subtitle = "5 minutes"
+                tile.subtitle = getCountdownText("5 minutes")
             }
             2 -> {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "Darjeeling"
-                tile.subtitle = "10 minutes"
+                tile.subtitle = getCountdownText("10 minutes")
             }
             3 -> {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "Darjeeling"
-                tile.subtitle = "15 minutes"
+                tile.subtitle = getCountdownText("15 minutes")
             }
             4 -> {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "Darjeeling"
-                tile.subtitle = "30 minutes"
+                tile.subtitle = getCountdownText("30 minutes")
             }
             5 -> {
                 tile.state = Tile.STATE_ACTIVE
