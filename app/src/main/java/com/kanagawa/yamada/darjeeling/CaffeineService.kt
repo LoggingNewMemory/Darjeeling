@@ -17,7 +17,6 @@ class CaffeineService : Service() {
         var currentState = 0 // 0=Off, 1=5m, 2=10m, 3=15m, 4=30m, 5=Unlimited
         var originalTimeout = 60000
         var isRunning = false
-        var lastTapTime = 0L
         var endTime = 0L
     }
 

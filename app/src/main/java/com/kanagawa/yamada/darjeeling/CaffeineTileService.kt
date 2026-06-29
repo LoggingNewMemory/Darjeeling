@@ -31,24 +31,15 @@ class CaffeineTileService : TileService() {
     override fun onClick() {
         super.onClick()
         
-        val now = System.currentTimeMillis()
-        if (CaffeineService.currentState == 0) {
-            CaffeineService.currentState = 1
-        } else {
-            if (now - CaffeineService.lastTapTime <= 3000L) {
-                CaffeineService.currentState = when (CaffeineService.currentState) {
-                    1 -> 2
-                    2 -> 3
-                    3 -> 4
-                    4 -> 5
-                    5 -> 0
-                    else -> 0
-                }
-            } else {
-                CaffeineService.currentState = 0
-            }
+        CaffeineService.currentState = when (CaffeineService.currentState) {
+            0 -> 1
+            1 -> 2
+            2 -> 3
+            3 -> 4
+            4 -> 5
+            5 -> 0
+            else -> 0
         }
-        CaffeineService.lastTapTime = now
         
         updateTileState()
         

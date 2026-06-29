@@ -227,9 +227,8 @@ fun CaffeineSettingsScreen(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 InstructionItem("1", "Add the Darjeeling tile to your Quick Settings panel.")
-                InstructionItem("2", "Tap repeatedly to cycle timers: 5m, 10m, 15m, 30m, Unlimited.")
-                InstructionItem("3", "Tapping the tile after a short delay turns it off.")
-                InstructionItem("4", "If the screen turns off naturally or via the power button, Darjeeling is automatically disabled.")
+                InstructionItem("2", "Tap repeatedly to cycle timers: 5m, 10m, 15m, 30m, Unlimited, Off.")
+                InstructionItem("3", "If the screen turns off naturally or via the power button, Darjeeling is automatically disabled.")
             }
         }
     }
